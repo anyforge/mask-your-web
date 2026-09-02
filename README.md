@@ -36,6 +36,12 @@ Chinese page demo:
 
 > Each demo: a page full of sensitive data → one click to enable → text masked (keep edges, gray middle) → **hover reveals the original** → text inside the image is OCR-redacted.
 
+Canvas table masking (v1.0.1):
+
+<img src="demo-canvas-en.gif" width="820" alt="MaskYourWeb canvas table masking demo" />
+
+> Canvas demo: a canvas-rendered table (Feishu-style) has no DOM text nodes — enable canvas masking and phone numbers / SSNs are OCR-recognized and masked.
+
 ## 🚀 Install (unpacked)
 
 1. Open `chrome://extensions` in Chrome / Edge / Brave (Chromium).

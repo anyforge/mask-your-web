@@ -36,6 +36,12 @@
 
 > 演示流程：一个满是敏感数据的页面 → 一键开启 → 文本打码（保留首尾、灰底中间）→ **鼠标悬停显示原文** → 图片里的文字也被 OCR 识别打码。
 
+Canvas 表格脱敏（v1.0.1）：
+
+<img src="demo-canvas-zh.gif" width="820" alt="MaskYourWeb canvas 表格脱敏演示" />
+
+> Canvas 演示：一个 canvas 渲染的表格（飞书风格），DOM 中无文本节点 —— 开启 canvas 脱敏后，手机号与身份证号被 OCR 识别并打码。
+
 ## 🚀 安装（开发者模式加载）
 
 1. 打开 Chrome / Edge / Brave（Chromium 内核）的 `chrome://extensions`。
