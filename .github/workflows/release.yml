@@ -22,8 +22,20 @@ jobs:
             content popup options shared assets _locales \
             -x "*.DS_Store"
 
+      - name: Extract changelog for this version
+        run: |
+          python3 - <<'PYEOF'
+          import re, os
+          tag = os.environ['GITHUB_REF_NAME'].lstrip('v')
+          text = open('CHANGELOG.md', encoding='utf-8').read()
+          m = re.search(r'^## \[?' + re.escape(tag) + r'\]?[^\n]*\n(.*?)(?=^## \[|\Z)', text, re.M | re.S)
+          body = (m.group(0) if m else text).strip()
+          open('/tmp/notes.md', 'w', encoding='utf-8').write(body)
+          print(body)
+          PYEOF
+
       - name: Create release & attach zip
         uses: softprops/action-gh-release@v2
         with:
+          body_path: /tmp/notes.md
           files: mask-your-web-*.zip
-          generate_release_notes: true

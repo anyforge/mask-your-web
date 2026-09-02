@@ -26,6 +26,18 @@
         <span data-i18n="opts.ocrEnable">图片 OCR 打码</span>
       </label>
       <p class="desc" data-i18n="opts.ocrEnableDesc">关闭后只做文本脱敏，不对图片做 OCR 识别打码（省去加载 OCR 模型）。</p>
+      <label class="switch-row" style="margin-top:12px">
+        <span class="switch"><input type="checkbox" id="mask-canvas"><span class="slider"></span></span>
+        <span data-i18n="opts.canvasEnable">Canvas 表格脱敏</span>
+      </label>
+      <p class="desc" data-i18n="opts.canvasEnableDesc">对 canvas 渲染的表格（如飞书电子表格）截图 OCR 识别后打码；仅对宽高均 ≥ 阈值的 canvas 生效，使用「全文」规则的识别规则。</p>
+      <div class="canvas-threshold" id="canvas-threshold" style="display:none">
+        <span class="canvas-threshold-label" data-i18n="opts.canvasMinSize">最小尺寸（宽 × 高，像素）</span>
+        <input type="number" id="mask-canvas-w" min="50" max="4000" step="10" value="200">
+        <span class="canvas-threshold-x">×</span>
+        <input type="number" id="mask-canvas-h" min="50" max="4000" step="10" value="200">
+        <span class="canvas-threshold-hint" data-i18n="opts.canvasMinSizeHint">页面里的图表/logo 等也可能是 canvas，设大阈值可避免误伤</span>
+      </div>
     </div>
 
     <div class="section">

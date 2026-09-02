@@ -75,11 +75,25 @@ function draftToRulesRaw() {
   }));
 }
 
+// canvas 阈值读取（clamp 到 [50, 4000]，非法回退 200）
+function canvasMinValue(axis) {
+  const el = axis === 'h' ? $('#mask-canvas-h') : $('#mask-canvas-w');
+  const n = parseInt(el && el.value, 10);
+  return Number.isNaN(n) ? 200 : Math.max(50, Math.min(4000, n));
+}
+function intOr(v, def) {
+  const n = parseInt(v, 10);
+  return Number.isNaN(n) ? def : n;
+}
+
 // 当前表单 → 完整配置对象（= storage maskConfig 格式）
 function serializeConfig() {
   return {
     enabled: $('#mask-enabled').checked,
     ocrEnabled: $('#mask-ocr').checked,
+    canvasEnabled: $('#mask-canvas').checked,
+    canvasMinWidth: canvasMinValue(),
+    canvasMinHeight: canvasMinValue('h'),
     urls: $('#mask-urls').value.split('\n').map((s) => s.trim()).filter(Boolean),
     rules: draftToRulesRaw(),
   };
@@ -199,6 +213,9 @@ function applyJsonFromText(silent) {
     cfg = {
       enabled: !!parsed.enabled,
       ocrEnabled: parsed.ocrEnabled !== false,
+      canvasEnabled: parsed.canvasEnabled === true,
+      canvasMinWidth: Math.max(50, Math.min(4000, intOr(parsed.canvasMinWidth, 200))),
+      canvasMinHeight: Math.max(50, Math.min(4000, intOr(parsed.canvasMinHeight, 200))),
       urls: Array.isArray(parsed.urls) ? parsed.urls.map(s => String(s).trim()).filter(Boolean) : [],
       rules: rulesToDraft(Array.isArray(parsed.rules) ? parsed.rules : []),
     };
@@ -208,6 +225,10 @@ function applyJsonFromText(silent) {
   }
   $('#mask-enabled').checked = cfg.enabled;
   $('#mask-ocr').checked = cfg.ocrEnabled;
+  $('#mask-canvas').checked = cfg.canvasEnabled;
+  $('#mask-canvas-w').value = cfg.canvasMinWidth;
+  $('#mask-canvas-h').value = cfg.canvasMinHeight;
+  $('#canvas-threshold').style.display = cfg.canvasEnabled ? 'flex' : 'none';
   $('#mask-urls').value = cfg.urls.join('\n');
   maskRulesDraft = cfg.rules;
   renderMaskRules();
@@ -248,6 +269,10 @@ async function init() {
 
   $('#mask-enabled').checked = !!cfg.enabled;
   $('#mask-ocr').checked = cfg.ocrEnabled !== false;
+  $('#mask-canvas').checked = cfg.canvasEnabled === true;
+  $('#mask-canvas-w').value = intOr(cfg.canvasMinWidth, 200);
+  $('#mask-canvas-h').value = intOr(cfg.canvasMinHeight, 200);
+  $('#canvas-threshold').style.display = (cfg.canvasEnabled === true) ? 'flex' : 'none';
   $('#mask-urls').value = (cfg.urls || []).join('\n');
   maskRulesDraft = rulesToDraft(cfg.rules || []);
   renderMaskRules();
@@ -257,6 +282,12 @@ async function init() {
   // 表单变化 → JSON 自动刷新
   $('#mask-enabled').onchange = scheduleRenderJson;
   $('#mask-ocr').onchange = scheduleRenderJson;
+  $('#mask-canvas').onchange = () => {
+    $('#canvas-threshold').style.display = $('#mask-canvas').checked ? 'flex' : 'none';
+    scheduleRenderJson();
+  };
+  $('#mask-canvas-w').oninput = scheduleRenderJson;
+  $('#mask-canvas-h').oninput = scheduleRenderJson;
   $('#mask-urls').oninput = scheduleRenderJson;
 
   // JSON 编辑 → 表单自动应用（防抖）
@@ -292,6 +323,9 @@ async function init() {
     const next = {
       enabled: $('#mask-enabled').checked,
       ocrEnabled: $('#mask-ocr').checked,
+      canvasEnabled: $('#mask-canvas').checked,
+      canvasMinWidth: canvasMinValue(),
+      canvasMinHeight: canvasMinValue('h'),
       urls: $('#mask-urls').value.split('\n').map((s) => s.trim()).filter(Boolean),
       rules: collectMaskRules(),
     };

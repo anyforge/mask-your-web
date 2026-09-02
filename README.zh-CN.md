@@ -119,6 +119,13 @@ mask-your-web/
 └── demo-en.gif            # 演示录屏（英文页面）
 ```
 
+## 📝 更新日志
+
+- **v1.0.1** — 新增 Canvas 表格脱敏：对 canvas 渲染的表格（如飞书电子表格）截图 OCR 后覆盖层打码；新增开关 + 可配置最小尺寸阈值（默认 200×200）。
+- **v1.0.0** — 首个版本：文本脱敏（正文 + HTML 表格，悬停显原文）、图片 OCR 打码、按站点开关、JSON 配置、中英双语。
+
+完整历史见 [CHANGELOG.md](./CHANGELOG.md)。
+
 ## 📄 许可证
 
 采用 **GNU Affero General Public License v3.0（AGPL-3.0）**，详见 [LICENSE](./LICENSE)。

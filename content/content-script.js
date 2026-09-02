@@ -128,6 +128,104 @@
     finally { ocrBusy = false; }
   }
 
+  // ===== Canvas 表格脱敏（截图 → OCR → 覆盖层打码；无列语义，只用 full 规则）=====
+  let canvasBusy = false;
+  let canvasMasks = [];
+  let canvasRescanTimer = null;
+
+  function canvasClamp(v, def, min, max) {
+    const n = parseInt(v, 10);
+    if (Number.isNaN(n)) return def;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function ensureCanvasOverlay(canvas) {
+    let entry = canvasMasks.find(e => e.canvas === canvas);
+    if (entry) return entry;
+    const parent = canvas.parentElement;
+    if (!parent) return null;
+    try {
+      const cs = getComputedStyle(parent);
+      if (cs.position === 'static') parent.style.position = 'relative';
+    } catch (e) {}
+    const overlay = document.createElement('div');
+    overlay.className = 'tm-canvas-mask';
+    overlay.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;overflow:hidden;z-index:2147483647;';
+    parent.appendChild(overlay);
+    entry = { canvas, parent, overlay };
+    canvasMasks.push(entry);
+    return entry;
+  }
+
+  function drawCanvasOverlay(canvas, boxes, bitmapW, bitmapH) {
+    const entry = ensureCanvasOverlay(canvas);
+    if (!entry) return;
+    const rect = canvas.getBoundingClientRect();
+    const parentRect = entry.parent.getBoundingClientRect();
+    const sx = bitmapW ? rect.width / bitmapW : 1;
+    const sy = bitmapH ? rect.height / bitmapH : 1;
+    entry.overlay.style.left = (rect.left - parentRect.left) + 'px';
+    entry.overlay.style.top = (rect.top - parentRect.top) + 'px';
+    entry.overlay.style.width = rect.width + 'px';
+    entry.overlay.style.height = rect.height + 'px';
+    entry.overlay.innerHTML = '';
+    for (const [x, y, w, h] of boxes) {
+      const bw = Math.max(1, w * sx), bh = Math.max(1, h * sy);
+      const block = document.createElement('div');
+      block.style.cssText = 'position:absolute;background:#1f2937;';
+      block.style.left = (x * sx) + 'px';
+      block.style.top = (y * sy) + 'px';
+      block.style.width = bw + 'px';
+      block.style.height = bh + 'px';
+      const star = document.createElement('div');
+      star.textContent = '***';
+      star.style.cssText = 'position:absolute;left:0;top:50%;transform:translateY(-50%);width:100%;text-align:center;color:#fff;font-size:' + Math.max(9, Math.min(14, bh * 0.5)) + 'px;line-height:1;';
+      block.appendChild(star);
+      entry.overlay.appendChild(block);
+    }
+  }
+
+  function clearCanvasOverlay(canvas) {
+    const idx = canvasMasks.findIndex(e => e.canvas === canvas);
+    if (idx < 0) return;
+    try { canvasMasks[idx].overlay.remove(); } catch (e) {}
+    canvasMasks.splice(idx, 1);
+  }
+
+  async function maskCanvas(canvas, regexList, dictSet) {
+    let bitmap;
+    try {
+      bitmap = await createImageBitmap(canvas);
+    } catch (e) { return; } // tainted / 不可读
+    try {
+      const r = await window.LwOcr.recognize(bitmap);
+      const boxes = matchMaskRules(r.lines, r.width, r.height, bitmap.width, bitmap.height, regexList, dictSet);
+      if (boxes.length) drawCanvasOverlay(canvas, boxes, bitmap.width, bitmap.height);
+      else clearCanvasOverlay(canvas);
+    } catch (e) { /* OCR 失败 */ }
+    finally { if (bitmap.close) bitmap.close(); }
+  }
+
+  async function runCanvasMask(regexList, dictSet, minW, minH) {
+    if (canvasBusy) return;
+    const canvases = Array.from(document.querySelectorAll('canvas')).filter(c => {
+      const r = c.getBoundingClientRect();
+      return r.width >= minW && r.height >= minH;
+    });
+    for (const e of canvasMasks.slice()) {
+      if (!e.canvas.isConnected) clearCanvasOverlay(e.canvas);
+    }
+    if (!canvases.length) return;
+    canvasBusy = true;
+    try {
+      await window.LwOcr.boot();
+      for (const c of canvases) {
+        try { await maskCanvas(c, regexList, dictSet); } catch (e) {}
+      }
+    } catch (e) {}
+    finally { canvasBusy = false; }
+  }
+
   // ===== 主流程 =====
   (async () => {
     let config;
@@ -140,7 +238,7 @@
     if (!urlMatchesMask(location.href, config.urls)) return;
 
     // 命中 → 请求 background 注入引擎（ocrEnabled=false 时不注入 OCR 模型）
-    const wantOcr = config.ocrEnabled !== false;
+    const wantOcr = config.ocrEnabled !== false || config.canvasEnabled === true;
     let resp;
     try { resp = await chrome.runtime.sendMessage({ type: 'mask-init', ocr: wantOcr }); } catch (e) { resp = null; }
     if (!resp || !resp.ok) return;
@@ -158,6 +256,27 @@
         const dictSet = buildDict(ocr.dict);
         await runImageMask(config.rules, regexList, dictSet);
         setInterval(() => runImageMask(config.rules, regexList, dictSet), 2000);
+      }
+    }
+
+    // Canvas 表格脱敏（受 canvasEnabled 开关控制；需要 OCR）
+    if (config.canvasEnabled === true && wantOcr) {
+      const cRec = getOcrRecognizers(config.rules);
+      if (cRec.regexes.length || cRec.dict.length) {
+        const cRegexList = compileRegexes(cRec.regexes);
+        const cDictSet = buildDict(cRec.dict);
+        const minW = canvasClamp(config.canvasMinWidth, 200, 50, 4000);
+        const minH = canvasClamp(config.canvasMinHeight, 200, 50, 4000);
+        const run = () => runCanvasMask(cRegexList, cDictSet, minW, minH);
+        await run();
+        setInterval(run, 2000);
+        const schedule = () => {
+          clearTimeout(canvasRescanTimer);
+          canvasRescanTimer = setTimeout(run, 500);
+        };
+        window.addEventListener('wheel', schedule, { capture: true, passive: true });
+        window.addEventListener('scroll', schedule, { capture: true, passive: true });
+        window.addEventListener('mouseup', schedule, { capture: true, passive: true });
       }
     }
   })();

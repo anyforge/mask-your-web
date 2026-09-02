@@ -190,3 +190,16 @@ textarea {
 .json-status { flex: 1; font-size: 12.5px; }
 .json-status.ok { color: var(--green); }
 .json-status.err { color: var(--danger); }
+
+/* ── Canvas 表格脱敏 ── */
+.canvas-threshold {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 4px 0 2px 52px; padding: 10px 12px;
+  background: var(--hover); border-radius: var(--radius-sm);
+}
+.canvas-threshold-label { font-size: 12.5px; color: var(--muted); }
+.canvas-threshold input[type="number"] {
+  width: 72px; height: 30px; padding: 0 8px; font-size: 13px; text-align: center;
+}
+.canvas-threshold-x { color: var(--muted); }
+.canvas-threshold-hint { flex-basis: 100%; font-size: 12px; color: var(--muted); }

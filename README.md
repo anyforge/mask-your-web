@@ -119,6 +119,13 @@ mask-your-web/
 └── demo-en.gif            # demo recording (English page)
 ```
 
+## 📝 Changelog
+
+- **v1.0.1** — Canvas table masking: OCR screenshots of canvas-rendered tables (e.g. Feishu spreadsheets) are masked via an overlay. New toggle + configurable min-size threshold (default 200×200).
+- **v1.0.0** — Initial release: text masking (body + HTML tables, hover to reveal), image OCR redaction, per-site toggle, JSON config, bilingual UI.
+
+Full history: [CHANGELOG.md](./CHANGELOG.md).
+
 ## 📄 License
 
 Licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)** — see [LICENSE](./LICENSE).
