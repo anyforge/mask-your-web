@@ -121,8 +121,22 @@ mask-your-web/
 
 ## 📝 Changelog
 
-- **v1.0.1** — Canvas table masking: OCR screenshots of canvas-rendered tables (e.g. Feishu spreadsheets) are masked via an overlay. New toggle + configurable min-size threshold (default 200×200).
-- **v1.0.0** — Initial release: text masking (body + HTML tables, hover to reveal), image OCR redaction, per-site toggle, JSON config, bilingual UI.
+### v1.0.1 (2026-09-02)
+
+**Added**
+- **Canvas table masking** — screenshot canvas-rendered tables (e.g. Feishu spreadsheets), OCR them, then mask matched text via an overlay. Fixes the blind spot where such tables have no DOM text nodes, so the existing text / HTML-table / image paths all fail.
+- New "Canvas table masking" toggle (default off) + configurable min-size threshold (default 200×200); threshold inputs expand when the toggle is on.
+- Rescans periodically (2s) and on scroll / wheel / click (debounced).
+
+**Notes**
+- Uses only "Full text" recognizers (regex / dict); column rules don't apply.
+- True masking (no hover); overlay is click-through.
+- Tainted canvases are skipped.
+
+### v1.0.0 (2026-09-02)
+
+**Added**
+- Initial release: text masking (body + HTML tables, hover to reveal), image OCR redaction, per-site toggle, regex/dict rules, JSON config, bilingual UI.
 
 Full history: [CHANGELOG.md](./CHANGELOG.md).
 
