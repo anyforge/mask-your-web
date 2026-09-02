@@ -1,0 +1,8 @@
+{
+  "extension_name": {
+    "message": "MaskYourWeb"
+  },
+  "extension_description": {
+    "message": "Mask sensitive web content: redact text (regex / dictionary, keep first/last N chars) and OCR images, applied automatically on matching sites."
+  }
+}

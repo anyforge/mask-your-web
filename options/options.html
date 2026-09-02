@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MaskYourWeb</title>
+<link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="titlebar">
+    <div class="title" data-i18n="opts.title">网页脱敏配置</div>
+    <div class="segmented">
+      <button data-lang-toggle="zh" class="active">中文</button>
+      <button data-lang-toggle="en">EN</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <label class="switch-row">
+        <span class="switch"><input type="checkbox" id="mask-enabled"><span class="slider"></span></span>
+        <span data-i18n="opts.enable">启用脱敏</span>
+      </label>
+      <p class="desc" data-i18n="opts.enableDesc">开启后，访问命中候选集的网页会对文本（正文 + 表格）和图片做脱敏打码；鼠标悬停文本遮罩可临时查看原文。</p>
+      <label class="switch-row" style="margin-top:12px">
+        <span class="switch"><input type="checkbox" id="mask-ocr"><span class="slider"></span></span>
+        <span data-i18n="opts.ocrEnable">图片 OCR 打码</span>
+      </label>
+      <p class="desc" data-i18n="opts.ocrEnableDesc">关闭后只做文本脱敏，不对图片做 OCR 识别打码（省去加载 OCR 模型）。</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="opts.urlTitle">URL 候选集（命中才脱敏，每行一个）</div>
+      <p class="desc" data-i18n="opts.urlDesc">支持 host 或 host+路径，子路径自动兼容（如 example.com/foo 命中 example.com/foo/bar）。</p>
+      <textarea id="mask-urls" rows="4" data-i18n-ph="opts.urlPlaceholder" spellcheck="false"></textarea>
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="opts.ruleTitle">脱敏规则（作用域 + 多条识别规则）</div>
+      <p class="desc" data-i18n="opts.ruleDesc">作用域：全文 = 页面正文 + 图片 OCR 识别；列名 = 表头命中则整列打码；列值 = 只扫表格列值。同一条规则内正则优先于词典。识别规则可配「保留前 N / 后 N」。</p>
+      <div id="mask-rules-list"></div>
+      <button class="btn" id="mask-rule-add" data-i18n="opts.newRule">＋ 新建脱敏规则</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="opts.jsonTitle">JSON 配置</div>
+      <p class="desc" data-i18n="opts.jsonDesc">以 JSON 形式查看 / 编辑 URL 与规则；编辑后自动应用到上方界面，也可导入 JSON 文件。</p>
+      <textarea id="mask-json" rows="12" spellcheck="false" class="json-editor"></textarea>
+      <div class="json-toolbar">
+        <span class="json-status" id="mask-json-status"></span>
+        <button class="btn" id="mask-json-import" data-i18n="opts.jsonImport">导入文件</button>
+        <button class="btn" id="mask-json-copy" data-i18n="opts.jsonCopy">复制</button>
+        <button class="btn" id="mask-json-apply" data-i18n="opts.jsonApply">应用</button>
+        <input type="file" id="mask-json-file" accept=".json,application/json" hidden>
+      </div>
+    </div>
+
+    <div class="actions">
+      <span class="status" id="mask-status"></span>
+      <button class="btn primary" id="mask-save" data-i18n="opts.save">保存</button>
+    </div>
+  </div>
+
+  <script src="../shared/i18n.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

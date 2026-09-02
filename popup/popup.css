@@ -1,0 +1,78 @@
+/* popup.css — macOS 风格（明亮浅色，无毛玻璃） */
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --fg: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #007aff;
+  --accent-hover: #0062cc;
+  --border: #d2d2d7;
+  --border-soft: #e5e5ea;
+  --hover: #f2f2f7;
+  --green: #34c759;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .08);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Helvetica Neue", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  width: 300px; background: var(--bg); color: var(--fg);
+  font-family: var(--font); font-size: 13px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 标题栏 */
+.titlebar {
+  display: flex; align-items: center; gap: 10px;
+  height: 44px; padding: 0 14px;
+  background: var(--card); border-bottom: 1px solid var(--border-soft);
+}
+.traffic-lights { display: flex; gap: 7px; flex: none; }
+.traffic-lights i {
+  width: 11px; height: 11px; border-radius: 50%; display: block;
+  box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .12);
+}
+.traffic-lights i.red { background: #ff5f57; }
+.traffic-lights i.yellow { background: #febc2e; }
+.traffic-lights i.green { background: #28c840; }
+.brand { flex: 1; font-size: 13.5px; font-weight: 600; }
+
+/* 分段语言切换 */
+.segmented { flex: none; display: flex; padding: 2px; background: #e9e9ec; border-radius: 7px; }
+.segmented button {
+  border: none; background: transparent; color: var(--muted);
+  font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 5px;
+  cursor: pointer; transition: all .15s ease; font-family: var(--font);
+}
+.segmented button.active { background: var(--card); color: var(--fg); box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+
+/* 卡片 */
+.card { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.host {
+  font-size: 12px; color: var(--muted); word-break: break-all;
+  background: var(--hover); border-radius: 8px; padding: 9px 11px;
+}
+
+/* macOS 开关 */
+.switch-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 500; }
+.switch { position: relative; display: inline-block; width: 42px; height: 25px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch .slider { position: absolute; inset: 0; cursor: pointer; background: #e9e9ec; border-radius: 25px; transition: background .2s ease; }
+.switch .slider::before {
+  content: ""; position: absolute; height: 21px; width: 21px; left: 2px; top: 2px;
+  background: #fff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+  transition: transform .2s ease;
+}
+.switch input:checked + .slider { background: var(--green); }
+.switch input:checked + .slider::before { transform: translateX(17px); }
+.switch input:disabled + .slider { opacity: .5; cursor: not-allowed; }
+.switch input:focus-visible + .slider { box-shadow: 0 0 0 3px rgba(0, 122, 255, .3); }
+
+/* 按钮 */
+.btn {
+  height: 34px; border-radius: 8px; border: none;
+  font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all .15s ease;
+}
+.btn.primary { background: var(--accent); color: #fff; box-shadow: 0 1px 3px rgba(0, 122, 255, .3); }
+.btn.primary:hover { background: var(--accent-hover); }

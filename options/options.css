@@ -1,0 +1,192 @@
+/* options.css — macOS 风格（明亮浅色，无毛玻璃） */
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --fg: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #007aff;
+  --accent-hover: #0062cc;
+  --border: #d2d2d7;
+  --border-soft: #e5e5ea;
+  --hover: #f2f2f7;
+  --danger: #ff3b30;
+  --green: #34c759;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, .10);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Helvetica Neue", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font); font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 标题栏（traffic lights + 标题 + 语言切换）── */
+.titlebar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 14px;
+  height: 52px; padding: 0 18px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border-soft);
+  backdrop-filter: none;
+}
+.titlebar .title {
+  flex: 1; font-size: 15px; font-weight: 600;
+  text-align: left; color: var(--fg);
+}
+
+/* ── 分段语言切换 ── */
+.segmented {
+  flex: none; display: flex; padding: 2px;
+  background: #e9e9ec; border-radius: 8px;
+}
+.segmented button {
+  border: none; background: transparent; color: var(--muted);
+  font-size: 12px; font-weight: 500; padding: 4px 12px;
+  border-radius: 6px; cursor: pointer; transition: all .15s ease;
+  font-family: var(--font);
+}
+.segmented button.active {
+  background: var(--card); color: var(--fg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
+
+/* ── 容器 + 卡片 ── */
+.container { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
+.section {
+  background: var(--card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.section-title { font-weight: 600; font-size: 14.5px; margin-bottom: 4px; }
+.desc { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin: 4px 0 12px; }
+
+/* ── macOS 开关 ── */
+.switch-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 500; }
+.switch { position: relative; display: inline-block; width: 42px; height: 25px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch .slider {
+  position: absolute; inset: 0; cursor: pointer;
+  background: #e9e9ec; border-radius: 25px; transition: background .2s ease;
+}
+.switch .slider::before {
+  content: ""; position: absolute; height: 21px; width: 21px;
+  left: 2px; top: 2px; background: #fff; border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .2); transition: transform .2s ease;
+}
+.switch input:checked + .slider { background: var(--green); }
+.switch input:checked + .slider::before { transform: translateX(17px); }
+.switch input:focus-visible + .slider { box-shadow: 0 0 0 3px rgba(0, 122, 255, .3); }
+
+/* ── 输入框 ── */
+textarea, input[type="text"], input[type="number"], select {
+  font-family: var(--font); color: var(--fg);
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); transition: border-color .15s ease, box-shadow .15s ease;
+}
+textarea:focus, input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, .18);
+}
+textarea {
+  width: 100%; padding: 10px 12px; font-size: 13px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; resize: vertical; min-height: 88px;
+}
+
+/* ── 规则列表 ── */
+#mask-rules-list { display: flex; flex-direction: column; gap: 12px; }
+.mask-rule-card {
+  border: 1px solid var(--border-soft); border-radius: var(--radius);
+  padding: 14px; background: var(--card);
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: var(--shadow);
+}
+.mask-rule-head { display: flex; align-items: center; gap: 8px; }
+.mask-rule-name {
+  flex: 1; min-width: 0; height: 32px; padding: 0 12px; font-size: 13px;
+}
+.mask-rule-scope { flex: none; height: 32px; padding: 0 8px; font-size: 13px; border-radius: var(--radius-sm); }
+.mask-rule-del {
+  flex: none; width: 32px; height: 32px; border-radius: var(--radius-sm);
+  border: 1px solid transparent; background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 14px; transition: all .15s ease;
+}
+.mask-rule-del:hover { color: var(--danger); background: rgba(255, 59, 48, .08); }
+
+.mask-rec-list { display: flex; flex-direction: column; gap: 8px; }
+.mask-rec { display: flex; align-items: flex-start; gap: 8px; }
+.mask-rec-type {
+  flex: none; width: 76px; height: 30px; padding: 0 6px; font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+.mask-rec-value {
+  flex: 1; min-width: 0; height: 30px; padding: 0 10px; font-size: 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.mask-rec-value.mask-rec-dict {
+  height: auto; min-height: 32px; max-height: 140px;
+  resize: vertical; padding: 5px 10px; line-height: 1.5;
+}
+.mask-rec-value.invalid { border-color: var(--danger); }
+.mask-rec-value.invalid:focus { box-shadow: 0 0 0 3px rgba(255, 59, 48, .15); border-color: var(--danger); }
+.mask-rec-del {
+  flex: none; width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 15px; transition: all .15s ease;
+}
+.mask-rec-del:hover { background: var(--hover); color: var(--danger); }
+
+.mask-rec-keep {
+  flex: none; display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--muted); white-space: nowrap;
+}
+.mask-rec-keep input {
+  width: 46px; height: 30px; padding: 0 6px; font-size: 12px; text-align: center;
+}
+.mask-rec-keep input::-webkit-inner-spin-button,
+.mask-rec-keep input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.mask-rec-add {
+  align-self: flex-start; padding: 5px 12px; border-radius: var(--radius-sm);
+  border: 1px dashed var(--border); background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 12px; font-weight: 500; transition: all .15s ease;
+  font-family: var(--font);
+}
+.mask-rec-add:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── 按钮 ── */
+.btn {
+  margin-top: 12px; padding: 7px 16px; border-radius: var(--radius-sm);
+  border: 1px dashed var(--border); background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 13px; font-weight: 500; transition: all .15s ease;
+  font-family: var(--font);
+}
+.btn:hover { color: var(--accent); border-color: var(--accent); }
+
+.actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.actions .btn.primary {
+  border: none; background: var(--accent); color: #fff;
+  padding: 9px 26px; margin-top: 0; box-shadow: 0 1px 3px rgba(0, 122, 255, .3);
+}
+.actions .btn.primary:hover { background: var(--accent-hover); }
+.status { color: var(--green); font-size: 13px; }
+
+/* ── JSON 配置 ── */
+.json-editor {
+  min-height: 220px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px; line-height: 1.55; tab-size: 2;
+}
+.json-toolbar { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.json-toolbar .btn {
+  margin-top: 0; border-style: solid; border-color: var(--border);
+  color: var(--fg); padding: 5px 12px; font-size: 12.5px;
+}
+.json-toolbar .btn:hover { border-color: var(--accent); color: var(--accent); }
+.json-status { flex: 1; font-size: 12.5px; }
+.json-status.ok { color: var(--green); }
+.json-status.err { color: var(--danger); }

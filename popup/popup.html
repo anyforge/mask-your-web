@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="titlebar">
+    <div class="traffic-lights">
+      <i class="red"></i><i class="yellow"></i><i class="green"></i>
+    </div>
+    <div class="brand">MaskYourWeb</div>
+    <div class="segmented">
+      <button data-lang-toggle="zh" class="active">中</button>
+      <button data-lang-toggle="en">EN</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="host" id="host">读取当前网页…</div>
+    <label class="switch-row">
+      <span class="switch"><input type="checkbox" id="toggle"><span class="slider"></span></span>
+      <span data-i18n="popup.apply">应用于当前网页</span>
+    </label>
+    <button class="btn primary" id="config" data-i18n="popup.settings">配置</button>
+  </div>
+
+  <script src="../shared/i18n.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

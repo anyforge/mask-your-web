@@ -1,0 +1,8 @@
+{
+  "extension_name": {
+    "message": "MaskYourWeb"
+  },
+  "extension_description": {
+    "message": "网页内容脱敏：文本（正则 / 词典，保留前 N / 后 N）+ 图片 OCR 打码，命中域名自动生效。"
+  }
+}
